@@ -27,38 +27,37 @@ $priceTikkiBurger = 112;
 
 $maxProfit = 0;
 
-
- while($TikkiPattice > 0 && $breads > 1){
-     
-     $breads=$breads-2;
-     
-     $TikkiPattice = $TikkiPattice -1;
-     $maxProfit=$maxProfit+$priceTikkiBurger;
- }
-
-
-while($nonVegPattice > 0 && $breads > 1){
+function maxProfit($breads, $vegPattice, $nonVegPattice, $TikkiPattice, $priceVegBurger, $priceNonVegBurger, $priceTikkiBurger) {
+    $dp = array_fill(0, $breads + 1, array_fill(0, $vegPattice + 1, array_fill(0, $nonVegPattice + 1, array_fill(0, $TikkiPattice + 1, -1))));
     
-     $breads = $breads-2;
-     
-     $nonVegPattice = $nonVegPattice -1;
-     
-     $maxProfit=$maxProfit+$priceNonVegBurger;
- }
- 
- 
-  while($vegPattice > 0 && $breads > 1){
-     $breads = $breads-2;
-     $vegPattice = $vegPattice -1;
-     
-     $maxProfit=$maxProfit+$priceVegBurger;
- }
+    return maxProfitHelper($breads, $vegPattice, $nonVegPattice, $TikkiPattice, $priceVegBurger, $priceNonVegBurger, $priceTikkiBurger, $dp);
+}
 
-echo "Maximum Possible Profit is : " . $maxProfit;
+function maxProfitHelper($breads, $vegPattice, $nonVegPattice, $TikkiPattice, $priceVegBurger, $priceNonVegBurger, $priceTikkiBurger, &$dp) {
+    if ($breads < 2) {
+        return 0;
+    }
+    
+    if ($dp[$breads][$vegPattice][$nonVegPattice][$TikkiPattice] != -1) {
+        return $dp[$breads][$vegPattice][$nonVegPattice][$TikkiPattice];
+    }
+    
+    $maxProfit = 0;
+    
+    if ($vegPattice > 0) {
+        $maxProfit = max($maxProfit, $priceVegBurger + maxProfitHelper($breads - 2, $vegPattice - 1, $nonVegPattice, $TikkiPattice, $priceVegBurger, $priceNonVegBurger, $priceTikkiBurger,$dp));
+    }
+    
+    if ($nonVegPattice > 0) {
+        $maxProfit = max($maxProfit,$priceNonVegBurger + maxProfitHelper($breads - 2,$vegPattice,$nonVegPattice - 1,$TikkiPattice,$priceVegBurger,$priceNonVegBurger,$priceTikkiBurger,$dp));
+    }
+    
+    if ($TikkiPattice > 0) {
+        $maxProfit = max($maxProfit,$priceTikkiBurger + maxProfitHelper($breads - 2,$vegPattice,$nonVegPattice,$TikkiPattice - 1,$priceVegBurger,$priceNonVegBurger,$priceTikkiBurger,$dp));
+    }
+    
+    return ($dp[$breads][$vegPattice][$nonVegPattice][$TikkiPattice] = $maxProfit);
+}
 
-
-
-
+echo maxProfit($breads,$vegPattice,$nonVegPattice,$TikkiPattice,$priceVegBurger,$priceNonVegBurger,$priceTikkiBurger);
 ?>
-
-
